@@ -1,0 +1,40 @@
+  # docker-compose.yml
+
+  version: "3"
+
+  services:
+      webserver:
+          image: vjcspy/apache2-php7
+          links:
+              - mysql
+          ports:
+              - "80:80"
+              - "2222:22"
+#              - "8999:9000"
+          networks:
+              - back-tier
+          volumes:
+              - /Users/vjcspy/docker/docker-data/site-available:/etc/apache2/sites-available
+              - /Users/vjcspy/docker/up.sh:/var/www/up.sh
+              - magento_source:/var/www/mage2.bms
+              - /Users/vjcspy/sites/mage2.bms/public_html/app:/var/www/mage2.bms/app
+          environment:
+              - ALLOW_OVERRIDE=true
+          hostname: webserver
+
+      mysql:
+          image: mysql:5.6
+          ports:
+              - "3306:3306"
+          networks:
+              - back-tier
+          volumes:
+              - /Users/vjcspy/docker/docker-data/mysql-data/:/var/lib/mysql/
+          environment:
+              - MYSQL_ROOT_PASSWORD=root
+          hostname: mysql
+
+  networks:
+      back-tier:
+  volumes:
+      magento_source:
